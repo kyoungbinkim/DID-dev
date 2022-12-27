@@ -40,7 +40,7 @@ export default class Issuer {
         const attrNum = attr.length;
         const mimc7 = new mimc.MiMC7();
         const ret = new Array(attrNum);
-        let concatTag = ''
+        let concatTag = '';
 
         for(let i=0; i<attrNum; i++){
             const r = math.randomFieldElement(this.pubKey.pp.prime).toString(16);
@@ -77,7 +77,7 @@ export default class Issuer {
         const attrNum = attr.length;
         const mimc7 = new mimc.MiMC7();
         const ret = new Array(attrNum);
-        let concatTag = ''
+        let concatTag = '';
 
         if(idData != mimc7.hash(data)){
             return undefined;
@@ -102,4 +102,3 @@ export default class Issuer {
         };
     }
 }
-

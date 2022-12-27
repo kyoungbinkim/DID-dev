@@ -9,7 +9,6 @@ describe('test', () => {
         const issuer = new Issuer(key.pk, key.sk);
         console.log(issuer.issueCredential('aff00ff00', {'name':'kim'}, {'age':199}))
         
-        
         const mimc7 = new mimc.MiMC7();
         const data = '0xffaaff00aaffaa1203012301';
         const id_data = mimc7.hash(data);
