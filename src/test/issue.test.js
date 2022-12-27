@@ -11,7 +11,7 @@ describe("issue by issuer", ()=> {
   let r = math.randomFieldElement(CurveParam.prime).toString(16);
   let attr = "this is short description for the novel";
   let mimc7 = new mimc.MiMC7();
-
   let t = mimc7.hash(userKey.pk.pkEnc + FileSystem.utf8StringToHexString(attr) + r);
   console.log(t);
+  schnorr.sign()
 });
