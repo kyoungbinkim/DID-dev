@@ -19,6 +19,8 @@
   },
   "homepage": "https://github.com/kyoungbinkim/DID-dev#readme",
   "dependencies": {
+    "@ethersproject/keccak256": "^5.7.0",
+    "@ethersproject/strings": "^5.7.0",
     "peerjs": "^1.4.7",
     "truffle": "^5.7.1"
   }
