@@ -4,7 +4,6 @@ import math from "../utils/math.js";
 import mimc from "../crypto/mimc.js";
 import types from "../utils/types.js";
 
-
 export default class Issuer {
     #privKey = undefined;
 
