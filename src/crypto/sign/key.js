@@ -12,6 +12,8 @@ export class PubKey {
     /**
      * 
      * @param {BigInt} sk 
+     * @param {BigInt} prime
+     * @param {BigInt} generator
      */
     constructor(sk){
 
@@ -29,9 +31,6 @@ export class PrivKey {
      * @param {BigInt} sk 
      */
     constructor(sk){
-        if(typeof sk !== 'bigint'){
-            
-        }
         this.pp = {
             prime     : Prime,
             generator : Generator,

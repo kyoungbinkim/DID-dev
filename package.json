@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/kyoungbinkim/DID-dev#readme",
   "dependencies": {
-    "peerjs": "^1.4.7"
+    "peerjs": "^1.4.7",
+    "truffle": "^5.7.1"
   }
 }
