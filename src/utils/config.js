@@ -15,8 +15,6 @@ var Config = {
 
     EC_ALT_BN128    : 1,
     EC_BLS12_381    : 2,
-
-
 }
 
 export default Config;

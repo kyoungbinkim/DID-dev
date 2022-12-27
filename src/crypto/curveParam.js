@@ -1,5 +1,8 @@
+<<<<<<< HEAD
 /* global BigInt */
 
+=======
+>>>>>>> mangoo
 const curveParam = {
     EC_TYPE: null,
     prime: null,
