@@ -1,9 +1,12 @@
-import { PubKey, PrivKey } from "../crypto/sign/key";
-import { Sign, Verify } from "../crypto/sign/sign";
+import { PubKey, PrivKey } from "../crypto/sign/key.js";
+import { Sign, Verify } from "../crypto/sign/sign.js";
+import math from "../utils/math.js";
+import mimc from "../crypto/mimc.js";
+import types from "../utils/types.js";
 
 
-class Issuer {
-    #privkey = undefined;
+export default class Issuer {
+    #privKey = undefined;
 
     /**
      * 
@@ -27,9 +30,37 @@ class Issuer {
         return new Issuer(pubk, prvk);
     }
 
-    
+    /**
+     * 
+     * @param {*} usrAddr 
+     * @param  {...any} attr 
+     * 
+     * @returns {infoJsonArr} [[attrJson, r, tag] ...]
+     */
     issueCredential(usrAddr, ...attr){
-        
+        const attrNum = attr.length;
+        const mimc7 = new mimc.MiMC7();
+        const ret = new Array(attrNum);
+        let concatTag = ''
+
+        for(let i=0; i<attrNum; i++){
+            const r = math.randomFieldElement(this.pubKey.pp.prime).toString(16);
+            const tmp = new Array();
+            const attrHex = types.asciiToHex(JSON.stringify(attr[i]));
+            const tag = mimc7.hash(usrAddr, attrHex, r)
+            
+            tmp.push(JSON.stringify(attr[i]), r, tag);
+            concatTag += tag
+
+            ret[i] = tmp;
+        }
+        console.log("concat Tag : ", concatTag);
+
+        const sign = Sign(concatTag, this.#privKey);
+        return {
+            'infoJsonArr' :ret,
+            'sign' :sign
+        };
     }
 
 
@@ -44,8 +75,32 @@ class Issuer {
      */
     
     issueData(idData, data, ...attr){
-        
+        const attrNum = attr.length;
+        const mimc7 = new mimc.MiMC7();
+        const ret = new Array(attrNum);
+        let concatTag = ''
 
-        
+        if(idData != mimc7.hash(data)){
+            return undefined;
+        }
+
+        for(let i=0; i<attrNum; i++){
+            const r = math.randomFieldElement(this.pubKey.pp.prime).toString(16);
+            const tmp = new Array();
+            const attrHex = types.asciiToHex(JSON.stringify(attr[i]));
+            const tag = mimc7.hash(idData, attrHex, data, r)
+            
+            tmp.push(JSON.stringify(attr[i]), r, tag);
+            concatTag += tag
+
+            ret[i] = tmp;
+        }
+
+        const sign = Sign(concatTag, this.#privKey);
+        return {
+            'infoJsonArr' :ret,
+            'sign' :sign
+        };
     }
 }
+
