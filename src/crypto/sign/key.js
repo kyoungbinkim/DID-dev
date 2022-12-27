@@ -1,7 +1,7 @@
 /* global BigInt */
 import CurveParam from "../curveParam.js"
 import Config from "../../utils/config.js"
-import {modPow} from "../../utils/math.js";
+import {modPow, randomFieldElement} from "../../utils/math.js";
 import types from "../../utils/types.js";
 
 const Generator = CurveParam(Config.EC_TYPE).g;
@@ -29,12 +29,26 @@ export class PrivKey {
      * @param {BigInt} sk 
      */
     constructor(sk){
+        if(typeof sk !== 'bigint'){
+            
+        }
         this.pp = {
             prime     : Prime,
             generator : Generator,
         }
         this.sk = sk;
     }
+}
+/**
+ * 
+ * @returns {PrivKey, PubKey} 
+ */
+export function SignKeyGen(){
+    const skBigInt = randomFieldElement(Prime);
+
+    const sk = new PrivKey(skBigInt);
+    const pk = new PubKey(skBigInt);
+    return { sk, pk };
 }
 
 /**

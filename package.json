@@ -17,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/kyoungbinkim/DID-dev/issues"
   },
-  "homepage": "https://github.com/kyoungbinkim/DID-dev#readme"
+  "homepage": "https://github.com/kyoungbinkim/DID-dev#readme",
+  "dependencies": {
+    "peerjs": "^1.4.7"
+  }
 }
