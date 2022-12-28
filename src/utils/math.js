@@ -107,6 +107,12 @@ export function modPow(b, e, n) {
     return r;
 }
 
+/**
+ * 
+ * @param {BigInt} value 
+ * @param {BigInt} mod 
+ * @returns {BigInt}
+ */
 export function mod(value, mod) {
     if (value <= BigInt('0')) {
         return ((value % mod) + mod) % mod;

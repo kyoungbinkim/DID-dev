@@ -1,0 +1,1161 @@
+{
+  "contractName": "MiMC31",
+  "abi": [],
+  "metadata": "{\"compiler\":{\"version\":\"0.8.2+commit.661d1103\"},\"language\":\"Solidity\",\"output\":{\"abi\":[],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"notice\":\"r = 8444461749428370424248824938781546531375899335154063827935233455917409239041   e (exponent) = 31, so that e=2^t-1 (t=5) and 1 == gcd(e, r-1)   rounds = 51 See MiMC7.sol for details.\",\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/MiMC31.sol\":\"MiMC31\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/MiMC31.sol\":{\"keccak256\":\"0x0f4ffdda071437dfa7edb1896a9ca4e3bc3e37d51ff9a8364e60d53e4d4ae187\",\"license\":\"LGPL-3.0+\",\"urls\":[\"bzz-raw://40a4d59491fdc203272b3065fc566f90db32e3e3b4bc5b0425f7b310a9eb960d\",\"dweb:/ipfs/QmW6g9xMsXQ4SXxzdNgZTMPtbzECuBWAZ8SSrzHMTvpx4H\"]}},\"version\":1}",
+  "bytecode": "0x60566050600b82828239805160001a6073146043577f4e487b7100000000000000000000000000000000000000000000000000000000600052600060045260246000fd5b30600052607381538281f3fe73000000000000000000000000000000000000000030146080604052600080fdfea2646970667358221220c3187298f79e213b56f3782a2006c9abd76df87665768cb94cbd643886408b0264736f6c63430008020033",
+  "deployedBytecode": "0x73000000000000000000000000000000000000000030146080604052600080fdfea2646970667358221220c3187298f79e213b56f3782a2006c9abd76df87665768cb94cbd643886408b0264736f6c63430008020033",
+  "immutableReferences": {},
+  "generatedSources": [],
+  "deployedGeneratedSources": [],
+  "sourceMap": "986:1986:3:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;",
+  "deployedSourceMap": "986:1986:3:-:0;;;;;;;;",
+  "source": "// Copyright (c) 2015-2020 Clearmatics Technologies Ltd\n// Copyright (c) 2021-2021 Zkrypto Inc.\n// SPDX-License-Identifier: LGPL-3.0+\npragma solidity ^0.8.2;\n\n/// Reference papers:\n///\n/// \\[AGRRT16]:\n/// \"MiMC: Efficient Encryption and Cryptographic Hashing with Minimal\n/// Multiplicative Complexity\", Martin Albrecht, Lorenzo Grassi, Christian\n/// Rechberger, Arnab Roy, and Tyge Tiessen, ASIACRYPT 2016,\n/// <https://eprint.iacr.org/2016/492.pdf>\n///\n/// \"One-way compression function\"\n/// Section: \"Miyaguchi–Preneel\"\n// solhint-disable-next-line max-line-length\n/// <https://en.wikipedia.org/wiki/One-way_compression_function#Miyaguchi%E2%80%93Preneel>\n///\n/// Implementation of MiMC hash targeting BLS12-377 Fr. This means:\n// solhint-disable-next-line max-line-length\n///   r = 8444461749428370424248824938781546531375899335154063827935233455917409239041\n///   e (exponent) = 31, so that e=2^t-1 (t=5) and 1 == gcd(e, r-1)\n///   rounds = 51\n///\n/// See MiMC7.sol for details.\nlibrary MiMC31\n{\n    function hash(bytes32 x, bytes32 y) internal pure returns(bytes32 out) {\n        // Round function (see [AGRRT16]):\n        //   F_i(a, key, rc_i) -> (a + key + rc)^31\n        //\n        // where:\n        //     rc_0 = 0\n        //     rc_1 = keccak(seed)\n        //     rc_i = keccak(rc_{i-1}), for i = 2, ...\n\n        assembly\n        {\n            // solhint-disable-next-line max-line-length\n            let r := 8444461749428370424248824938781546531375899335154063827935233455917409239041\n\n            // Perform round 0, in which rc = 0\n            let a := addmod(x, y, r)\n            let a2 := mulmod(a, a, r)\n            let a4 := mulmod(a2, a2, r)\n            let a8 := mulmod(a4, a4, r)\n            let a16 := mulmod(a8, a8, r)\n            a := mulmod(mulmod(mulmod(mulmod(a16, a8, r), a4, r), a2, r), a, r)\n\n            // Write round constant seed to pad at 0x00, where keccak256 will\n            // be applied iteratively\n            // solhint-disable-next-line max-line-length\n            mstore(0x0, 0xdec937b7fa8db3de380427a8cc947bfab68514522c3439cfa2e9965509836814)\n\n            for {let i := 0} slt(i, 50) {i := add(i,1)} {\n\n                // Compute rc_i, and store it back in the pad\n                let roundConstant := keccak256(0x0, 32)\n                mstore(0x0, roundConstant)\n\n                // Apply F_i\n                a := addmod(addmod(a, roundConstant, r), y, r)\n                a2 := mulmod(a, a, r)\n                a4 := mulmod(a2, a2, r)\n                a8 := mulmod(a4, a4, r)\n                a16 := mulmod(a8, a8, r)\n                a := mulmod(\n                    mulmod(mulmod(mulmod(a16, a8, r), a4, r), a2, r), a, r)\n            }\n\n            // Sum output with key, as described in [AGRRT16].\n            a := addmod(a, y, r)\n\n            // Myjaguchi-Preneel OWCF is then applied, which adds the key and\n            // message to the output of MiMC.\n            out := addmod(addmod(a, x, r), y, r)\n        }\n    }\n}\n",
+  "sourcePath": "/Users/kim/DID-dev/DIDcontracts/contracts/MiMC31.sol",
+  "ast": {
+    "absolutePath": "project:/contracts/MiMC31.sol",
+    "exportedSymbols": {
+      "MiMC31": [
+        2483
+      ]
+    },
+    "id": 2484,
+    "license": "LGPL-3.0+",
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 2470,
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".2"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "134:23:3"
+      },
+      {
+        "abstract": false,
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "library",
+        "documentation": {
+          "id": 2471,
+          "nodeType": "StructuredDocumentation",
+          "src": "778:208:3",
+          "text": "r = 8444461749428370424248824938781546531375899335154063827935233455917409239041\n   e (exponent) = 31, so that e=2^t-1 (t=5) and 1 == gcd(e, r-1)\n   rounds = 51\n See MiMC7.sol for details."
+        },
+        "fullyImplemented": true,
+        "id": 2483,
+        "linearizedBaseContracts": [
+          2483
+        ],
+        "name": "MiMC31",
+        "nameLocation": "994:6:3",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "body": {
+              "id": 2481,
+              "nodeType": "Block",
+              "src": "1078:1892:3",
+              "statements": [
+                {
+                  "AST": {
+                    "nodeType": "YulBlock",
+                    "src": "1344:1620:3",
+                    "statements": [
+                      {
+                        "nodeType": "YulVariableDeclaration",
+                        "src": "1415:85:3",
+                        "value": {
+                          "kind": "number",
+                          "nodeType": "YulLiteral",
+                          "src": "1424:76:3",
+                          "type": "",
+                          "value": "8444461749428370424248824938781546531375899335154063827935233455917409239041"
+                        },
+                        "variables": [
+                          {
+                            "name": "r",
+                            "nodeType": "YulTypedName",
+                            "src": "1419:1:3",
+                            "type": ""
+                          }
+                        ]
+                      },
+                      {
+                        "nodeType": "YulVariableDeclaration",
+                        "src": "1562:24:3",
+                        "value": {
+                          "arguments": [
+                            {
+                              "name": "x",
+                              "nodeType": "YulIdentifier",
+                              "src": "1578:1:3"
+                            },
+                            {
+                              "name": "y",
+                              "nodeType": "YulIdentifier",
+                              "src": "1581:1:3"
+                            },
+                            {
+                              "name": "r",
+                              "nodeType": "YulIdentifier",
+                              "src": "1584:1:3"
+                            }
+                          ],
+                          "functionName": {
+                            "name": "addmod",
+                            "nodeType": "YulIdentifier",
+                            "src": "1571:6:3"
+                          },
+                          "nodeType": "YulFunctionCall",
+                          "src": "1571:15:3"
+                        },
+                        "variables": [
+                          {
+                            "name": "a",
+                            "nodeType": "YulTypedName",
+                            "src": "1566:1:3",
+                            "type": ""
+                          }
+                        ]
+                      },
+                      {
+                        "nodeType": "YulVariableDeclaration",
+                        "src": "1599:25:3",
+                        "value": {
+                          "arguments": [
+                            {
+                              "name": "a",
+                              "nodeType": "YulIdentifier",
+                              "src": "1616:1:3"
+                            },
+                            {
+                              "name": "a",
+                              "nodeType": "YulIdentifier",
+                              "src": "1619:1:3"
+                            },
+                            {
+                              "name": "r",
+                              "nodeType": "YulIdentifier",
+                              "src": "1622:1:3"
+                            }
+                          ],
+                          "functionName": {
+                            "name": "mulmod",
+                            "nodeType": "YulIdentifier",
+                            "src": "1609:6:3"
+                          },
+                          "nodeType": "YulFunctionCall",
+                          "src": "1609:15:3"
+                        },
+                        "variables": [
+                          {
+                            "name": "a2",
+                            "nodeType": "YulTypedName",
+                            "src": "1603:2:3",
+                            "type": ""
+                          }
+                        ]
+                      },
+                      {
+                        "nodeType": "YulVariableDeclaration",
+                        "src": "1637:27:3",
+                        "value": {
+                          "arguments": [
+                            {
+                              "name": "a2",
+                              "nodeType": "YulIdentifier",
+                              "src": "1654:2:3"
+                            },
+                            {
+                              "name": "a2",
+                              "nodeType": "YulIdentifier",
+                              "src": "1658:2:3"
+                            },
+                            {
+                              "name": "r",
+                              "nodeType": "YulIdentifier",
+                              "src": "1662:1:3"
+                            }
+                          ],
+                          "functionName": {
+                            "name": "mulmod",
+                            "nodeType": "YulIdentifier",
+                            "src": "1647:6:3"
+                          },
+                          "nodeType": "YulFunctionCall",
+                          "src": "1647:17:3"
+                        },
+                        "variables": [
+                          {
+                            "name": "a4",
+                            "nodeType": "YulTypedName",
+                            "src": "1641:2:3",
+                            "type": ""
+                          }
+                        ]
+                      },
+                      {
+                        "nodeType": "YulVariableDeclaration",
+                        "src": "1677:27:3",
+                        "value": {
+                          "arguments": [
+                            {
+                              "name": "a4",
+                              "nodeType": "YulIdentifier",
+                              "src": "1694:2:3"
+                            },
+                            {
+                              "name": "a4",
+                              "nodeType": "YulIdentifier",
+                              "src": "1698:2:3"
+                            },
+                            {
+                              "name": "r",
+                              "nodeType": "YulIdentifier",
+                              "src": "1702:1:3"
+                            }
+                          ],
+                          "functionName": {
+                            "name": "mulmod",
+                            "nodeType": "YulIdentifier",
+                            "src": "1687:6:3"
+                          },
+                          "nodeType": "YulFunctionCall",
+                          "src": "1687:17:3"
+                        },
+                        "variables": [
+                          {
+                            "name": "a8",
+                            "nodeType": "YulTypedName",
+                            "src": "1681:2:3",
+                            "type": ""
+                          }
+                        ]
+                      },
+                      {
+                        "nodeType": "YulVariableDeclaration",
+                        "src": "1717:28:3",
+                        "value": {
+                          "arguments": [
+                            {
+                              "name": "a8",
+                              "nodeType": "YulIdentifier",
+                              "src": "1735:2:3"
+                            },
+                            {
+                              "name": "a8",
+                              "nodeType": "YulIdentifier",
+                              "src": "1739:2:3"
+                            },
+                            {
+                              "name": "r",
+                              "nodeType": "YulIdentifier",
+                              "src": "1743:1:3"
+                            }
+                          ],
+                          "functionName": {
+                            "name": "mulmod",
+                            "nodeType": "YulIdentifier",
+                            "src": "1728:6:3"
+                          },
+                          "nodeType": "YulFunctionCall",
+                          "src": "1728:17:3"
+                        },
+                        "variables": [
+                          {
+                            "name": "a16",
+                            "nodeType": "YulTypedName",
+                            "src": "1721:3:3",
+                            "type": ""
+                          }
+                        ]
+                      },
+                      {
+                        "nodeType": "YulAssignment",
+                        "src": "1758:67:3",
+                        "value": {
+                          "arguments": [
+                            {
+                              "arguments": [
+                                {
+                                  "arguments": [
+                                    {
+                                      "arguments": [
+                                        {
+                                          "name": "a16",
+                                          "nodeType": "YulIdentifier",
+                                          "src": "1791:3:3"
+                                        },
+                                        {
+                                          "name": "a8",
+                                          "nodeType": "YulIdentifier",
+                                          "src": "1796:2:3"
+                                        },
+                                        {
+                                          "name": "r",
+                                          "nodeType": "YulIdentifier",
+                                          "src": "1800:1:3"
+                                        }
+                                      ],
+                                      "functionName": {
+                                        "name": "mulmod",
+                                        "nodeType": "YulIdentifier",
+                                        "src": "1784:6:3"
+                                      },
+                                      "nodeType": "YulFunctionCall",
+                                      "src": "1784:18:3"
+                                    },
+                                    {
+                                      "name": "a4",
+                                      "nodeType": "YulIdentifier",
+                                      "src": "1804:2:3"
+                                    },
+                                    {
+                                      "name": "r",
+                                      "nodeType": "YulIdentifier",
+                                      "src": "1808:1:3"
+                                    }
+                                  ],
+                                  "functionName": {
+                                    "name": "mulmod",
+                                    "nodeType": "YulIdentifier",
+                                    "src": "1777:6:3"
+                                  },
+                                  "nodeType": "YulFunctionCall",
+                                  "src": "1777:33:3"
+                                },
+                                {
+                                  "name": "a2",
+                                  "nodeType": "YulIdentifier",
+                                  "src": "1812:2:3"
+                                },
+                                {
+                                  "name": "r",
+                                  "nodeType": "YulIdentifier",
+                                  "src": "1816:1:3"
+                                }
+                              ],
+                              "functionName": {
+                                "name": "mulmod",
+                                "nodeType": "YulIdentifier",
+                                "src": "1770:6:3"
+                              },
+                              "nodeType": "YulFunctionCall",
+                              "src": "1770:48:3"
+                            },
+                            {
+                              "name": "a",
+                              "nodeType": "YulIdentifier",
+                              "src": "1820:1:3"
+                            },
+                            {
+                              "name": "r",
+                              "nodeType": "YulIdentifier",
+                              "src": "1823:1:3"
+                            }
+                          ],
+                          "functionName": {
+                            "name": "mulmod",
+                            "nodeType": "YulIdentifier",
+                            "src": "1763:6:3"
+                          },
+                          "nodeType": "YulFunctionCall",
+                          "src": "1763:62:3"
+                        },
+                        "variableNames": [
+                          {
+                            "name": "a",
+                            "nodeType": "YulIdentifier",
+                            "src": "1758:1:3"
+                          }
+                        ]
+                      },
+                      {
+                        "expression": {
+                          "arguments": [
+                            {
+                              "kind": "number",
+                              "nodeType": "YulLiteral",
+                              "src": "2019:3:3",
+                              "type": "",
+                              "value": "0x0"
+                            },
+                            {
+                              "kind": "number",
+                              "nodeType": "YulLiteral",
+                              "src": "2024:66:3",
+                              "type": "",
+                              "value": "0xdec937b7fa8db3de380427a8cc947bfab68514522c3439cfa2e9965509836814"
+                            }
+                          ],
+                          "functionName": {
+                            "name": "mstore",
+                            "nodeType": "YulIdentifier",
+                            "src": "2012:6:3"
+                          },
+                          "nodeType": "YulFunctionCall",
+                          "src": "2012:79:3"
+                        },
+                        "nodeType": "YulExpressionStatement",
+                        "src": "2012:79:3"
+                      },
+                      {
+                        "body": {
+                          "nodeType": "YulBlock",
+                          "src": "2149:534:3",
+                          "statements": [
+                            {
+                              "nodeType": "YulVariableDeclaration",
+                              "src": "2230:39:3",
+                              "value": {
+                                "arguments": [
+                                  {
+                                    "kind": "number",
+                                    "nodeType": "YulLiteral",
+                                    "src": "2261:3:3",
+                                    "type": "",
+                                    "value": "0x0"
+                                  },
+                                  {
+                                    "kind": "number",
+                                    "nodeType": "YulLiteral",
+                                    "src": "2266:2:3",
+                                    "type": "",
+                                    "value": "32"
+                                  }
+                                ],
+                                "functionName": {
+                                  "name": "keccak256",
+                                  "nodeType": "YulIdentifier",
+                                  "src": "2251:9:3"
+                                },
+                                "nodeType": "YulFunctionCall",
+                                "src": "2251:18:3"
+                              },
+                              "variables": [
+                                {
+                                  "name": "roundConstant",
+                                  "nodeType": "YulTypedName",
+                                  "src": "2234:13:3",
+                                  "type": ""
+                                }
+                              ]
+                            },
+                            {
+                              "expression": {
+                                "arguments": [
+                                  {
+                                    "kind": "number",
+                                    "nodeType": "YulLiteral",
+                                    "src": "2293:3:3",
+                                    "type": "",
+                                    "value": "0x0"
+                                  },
+                                  {
+                                    "name": "roundConstant",
+                                    "nodeType": "YulIdentifier",
+                                    "src": "2298:13:3"
+                                  }
+                                ],
+                                "functionName": {
+                                  "name": "mstore",
+                                  "nodeType": "YulIdentifier",
+                                  "src": "2286:6:3"
+                                },
+                                "nodeType": "YulFunctionCall",
+                                "src": "2286:26:3"
+                              },
+                              "nodeType": "YulExpressionStatement",
+                              "src": "2286:26:3"
+                            },
+                            {
+                              "nodeType": "YulAssignment",
+                              "src": "2359:46:3",
+                              "value": {
+                                "arguments": [
+                                  {
+                                    "arguments": [
+                                      {
+                                        "name": "a",
+                                        "nodeType": "YulIdentifier",
+                                        "src": "2378:1:3"
+                                      },
+                                      {
+                                        "name": "roundConstant",
+                                        "nodeType": "YulIdentifier",
+                                        "src": "2381:13:3"
+                                      },
+                                      {
+                                        "name": "r",
+                                        "nodeType": "YulIdentifier",
+                                        "src": "2396:1:3"
+                                      }
+                                    ],
+                                    "functionName": {
+                                      "name": "addmod",
+                                      "nodeType": "YulIdentifier",
+                                      "src": "2371:6:3"
+                                    },
+                                    "nodeType": "YulFunctionCall",
+                                    "src": "2371:27:3"
+                                  },
+                                  {
+                                    "name": "y",
+                                    "nodeType": "YulIdentifier",
+                                    "src": "2400:1:3"
+                                  },
+                                  {
+                                    "name": "r",
+                                    "nodeType": "YulIdentifier",
+                                    "src": "2403:1:3"
+                                  }
+                                ],
+                                "functionName": {
+                                  "name": "addmod",
+                                  "nodeType": "YulIdentifier",
+                                  "src": "2364:6:3"
+                                },
+                                "nodeType": "YulFunctionCall",
+                                "src": "2364:41:3"
+                              },
+                              "variableNames": [
+                                {
+                                  "name": "a",
+                                  "nodeType": "YulIdentifier",
+                                  "src": "2359:1:3"
+                                }
+                              ]
+                            },
+                            {
+                              "nodeType": "YulAssignment",
+                              "src": "2422:21:3",
+                              "value": {
+                                "arguments": [
+                                  {
+                                    "name": "a",
+                                    "nodeType": "YulIdentifier",
+                                    "src": "2435:1:3"
+                                  },
+                                  {
+                                    "name": "a",
+                                    "nodeType": "YulIdentifier",
+                                    "src": "2438:1:3"
+                                  },
+                                  {
+                                    "name": "r",
+                                    "nodeType": "YulIdentifier",
+                                    "src": "2441:1:3"
+                                  }
+                                ],
+                                "functionName": {
+                                  "name": "mulmod",
+                                  "nodeType": "YulIdentifier",
+                                  "src": "2428:6:3"
+                                },
+                                "nodeType": "YulFunctionCall",
+                                "src": "2428:15:3"
+                              },
+                              "variableNames": [
+                                {
+                                  "name": "a2",
+                                  "nodeType": "YulIdentifier",
+                                  "src": "2422:2:3"
+                                }
+                              ]
+                            },
+                            {
+                              "nodeType": "YulAssignment",
+                              "src": "2460:23:3",
+                              "value": {
+                                "arguments": [
+                                  {
+                                    "name": "a2",
+                                    "nodeType": "YulIdentifier",
+                                    "src": "2473:2:3"
+                                  },
+                                  {
+                                    "name": "a2",
+                                    "nodeType": "YulIdentifier",
+                                    "src": "2477:2:3"
+                                  },
+                                  {
+                                    "name": "r",
+                                    "nodeType": "YulIdentifier",
+                                    "src": "2481:1:3"
+                                  }
+                                ],
+                                "functionName": {
+                                  "name": "mulmod",
+                                  "nodeType": "YulIdentifier",
+                                  "src": "2466:6:3"
+                                },
+                                "nodeType": "YulFunctionCall",
+                                "src": "2466:17:3"
+                              },
+                              "variableNames": [
+                                {
+                                  "name": "a4",
+                                  "nodeType": "YulIdentifier",
+                                  "src": "2460:2:3"
+                                }
+                              ]
+                            },
+                            {
+                              "nodeType": "YulAssignment",
+                              "src": "2500:23:3",
+                              "value": {
+                                "arguments": [
+                                  {
+                                    "name": "a4",
+                                    "nodeType": "YulIdentifier",
+                                    "src": "2513:2:3"
+                                  },
+                                  {
+                                    "name": "a4",
+                                    "nodeType": "YulIdentifier",
+                                    "src": "2517:2:3"
+                                  },
+                                  {
+                                    "name": "r",
+                                    "nodeType": "YulIdentifier",
+                                    "src": "2521:1:3"
+                                  }
+                                ],
+                                "functionName": {
+                                  "name": "mulmod",
+                                  "nodeType": "YulIdentifier",
+                                  "src": "2506:6:3"
+                                },
+                                "nodeType": "YulFunctionCall",
+                                "src": "2506:17:3"
+                              },
+                              "variableNames": [
+                                {
+                                  "name": "a8",
+                                  "nodeType": "YulIdentifier",
+                                  "src": "2500:2:3"
+                                }
+                              ]
+                            },
+                            {
+                              "nodeType": "YulAssignment",
+                              "src": "2540:24:3",
+                              "value": {
+                                "arguments": [
+                                  {
+                                    "name": "a8",
+                                    "nodeType": "YulIdentifier",
+                                    "src": "2554:2:3"
+                                  },
+                                  {
+                                    "name": "a8",
+                                    "nodeType": "YulIdentifier",
+                                    "src": "2558:2:3"
+                                  },
+                                  {
+                                    "name": "r",
+                                    "nodeType": "YulIdentifier",
+                                    "src": "2562:1:3"
+                                  }
+                                ],
+                                "functionName": {
+                                  "name": "mulmod",
+                                  "nodeType": "YulIdentifier",
+                                  "src": "2547:6:3"
+                                },
+                                "nodeType": "YulFunctionCall",
+                                "src": "2547:17:3"
+                              },
+                              "variableNames": [
+                                {
+                                  "name": "a16",
+                                  "nodeType": "YulIdentifier",
+                                  "src": "2540:3:3"
+                                }
+                              ]
+                            },
+                            {
+                              "nodeType": "YulAssignment",
+                              "src": "2581:88:3",
+                              "value": {
+                                "arguments": [
+                                  {
+                                    "arguments": [
+                                      {
+                                        "arguments": [
+                                          {
+                                            "arguments": [
+                                              {
+                                                "name": "a16",
+                                                "nodeType": "YulIdentifier",
+                                                "src": "2635:3:3"
+                                              },
+                                              {
+                                                "name": "a8",
+                                                "nodeType": "YulIdentifier",
+                                                "src": "2640:2:3"
+                                              },
+                                              {
+                                                "name": "r",
+                                                "nodeType": "YulIdentifier",
+                                                "src": "2644:1:3"
+                                              }
+                                            ],
+                                            "functionName": {
+                                              "name": "mulmod",
+                                              "nodeType": "YulIdentifier",
+                                              "src": "2628:6:3"
+                                            },
+                                            "nodeType": "YulFunctionCall",
+                                            "src": "2628:18:3"
+                                          },
+                                          {
+                                            "name": "a4",
+                                            "nodeType": "YulIdentifier",
+                                            "src": "2648:2:3"
+                                          },
+                                          {
+                                            "name": "r",
+                                            "nodeType": "YulIdentifier",
+                                            "src": "2652:1:3"
+                                          }
+                                        ],
+                                        "functionName": {
+                                          "name": "mulmod",
+                                          "nodeType": "YulIdentifier",
+                                          "src": "2621:6:3"
+                                        },
+                                        "nodeType": "YulFunctionCall",
+                                        "src": "2621:33:3"
+                                      },
+                                      {
+                                        "name": "a2",
+                                        "nodeType": "YulIdentifier",
+                                        "src": "2656:2:3"
+                                      },
+                                      {
+                                        "name": "r",
+                                        "nodeType": "YulIdentifier",
+                                        "src": "2660:1:3"
+                                      }
+                                    ],
+                                    "functionName": {
+                                      "name": "mulmod",
+                                      "nodeType": "YulIdentifier",
+                                      "src": "2614:6:3"
+                                    },
+                                    "nodeType": "YulFunctionCall",
+                                    "src": "2614:48:3"
+                                  },
+                                  {
+                                    "name": "a",
+                                    "nodeType": "YulIdentifier",
+                                    "src": "2664:1:3"
+                                  },
+                                  {
+                                    "name": "r",
+                                    "nodeType": "YulIdentifier",
+                                    "src": "2667:1:3"
+                                  }
+                                ],
+                                "functionName": {
+                                  "name": "mulmod",
+                                  "nodeType": "YulIdentifier",
+                                  "src": "2586:6:3"
+                                },
+                                "nodeType": "YulFunctionCall",
+                                "src": "2586:83:3"
+                              },
+                              "variableNames": [
+                                {
+                                  "name": "a",
+                                  "nodeType": "YulIdentifier",
+                                  "src": "2581:1:3"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        "condition": {
+                          "arguments": [
+                            {
+                              "name": "i",
+                              "nodeType": "YulIdentifier",
+                              "src": "2126:1:3"
+                            },
+                            {
+                              "kind": "number",
+                              "nodeType": "YulLiteral",
+                              "src": "2129:2:3",
+                              "type": "",
+                              "value": "50"
+                            }
+                          ],
+                          "functionName": {
+                            "name": "slt",
+                            "nodeType": "YulIdentifier",
+                            "src": "2122:3:3"
+                          },
+                          "nodeType": "YulFunctionCall",
+                          "src": "2122:10:3"
+                        },
+                        "nodeType": "YulForLoop",
+                        "post": {
+                          "nodeType": "YulBlock",
+                          "src": "2133:15:3",
+                          "statements": [
+                            {
+                              "nodeType": "YulAssignment",
+                              "src": "2134:13:3",
+                              "value": {
+                                "arguments": [
+                                  {
+                                    "name": "i",
+                                    "nodeType": "YulIdentifier",
+                                    "src": "2143:1:3"
+                                  },
+                                  {
+                                    "kind": "number",
+                                    "nodeType": "YulLiteral",
+                                    "src": "2145:1:3",
+                                    "type": "",
+                                    "value": "1"
+                                  }
+                                ],
+                                "functionName": {
+                                  "name": "add",
+                                  "nodeType": "YulIdentifier",
+                                  "src": "2139:3:3"
+                                },
+                                "nodeType": "YulFunctionCall",
+                                "src": "2139:8:3"
+                              },
+                              "variableNames": [
+                                {
+                                  "name": "i",
+                                  "nodeType": "YulIdentifier",
+                                  "src": "2134:1:3"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        "pre": {
+                          "nodeType": "YulBlock",
+                          "src": "2109:12:3",
+                          "statements": [
+                            {
+                              "nodeType": "YulVariableDeclaration",
+                              "src": "2110:10:3",
+                              "value": {
+                                "kind": "number",
+                                "nodeType": "YulLiteral",
+                                "src": "2119:1:3",
+                                "type": "",
+                                "value": "0"
+                              },
+                              "variables": [
+                                {
+                                  "name": "i",
+                                  "nodeType": "YulTypedName",
+                                  "src": "2114:1:3",
+                                  "type": ""
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        "src": "2105:578:3"
+                      },
+                      {
+                        "nodeType": "YulAssignment",
+                        "src": "2760:20:3",
+                        "value": {
+                          "arguments": [
+                            {
+                              "name": "a",
+                              "nodeType": "YulIdentifier",
+                              "src": "2772:1:3"
+                            },
+                            {
+                              "name": "y",
+                              "nodeType": "YulIdentifier",
+                              "src": "2775:1:3"
+                            },
+                            {
+                              "name": "r",
+                              "nodeType": "YulIdentifier",
+                              "src": "2778:1:3"
+                            }
+                          ],
+                          "functionName": {
+                            "name": "addmod",
+                            "nodeType": "YulIdentifier",
+                            "src": "2765:6:3"
+                          },
+                          "nodeType": "YulFunctionCall",
+                          "src": "2765:15:3"
+                        },
+                        "variableNames": [
+                          {
+                            "name": "a",
+                            "nodeType": "YulIdentifier",
+                            "src": "2760:1:3"
+                          }
+                        ]
+                      },
+                      {
+                        "nodeType": "YulAssignment",
+                        "src": "2918:36:3",
+                        "value": {
+                          "arguments": [
+                            {
+                              "arguments": [
+                                {
+                                  "name": "a",
+                                  "nodeType": "YulIdentifier",
+                                  "src": "2939:1:3"
+                                },
+                                {
+                                  "name": "x",
+                                  "nodeType": "YulIdentifier",
+                                  "src": "2942:1:3"
+                                },
+                                {
+                                  "name": "r",
+                                  "nodeType": "YulIdentifier",
+                                  "src": "2945:1:3"
+                                }
+                              ],
+                              "functionName": {
+                                "name": "addmod",
+                                "nodeType": "YulIdentifier",
+                                "src": "2932:6:3"
+                              },
+                              "nodeType": "YulFunctionCall",
+                              "src": "2932:15:3"
+                            },
+                            {
+                              "name": "y",
+                              "nodeType": "YulIdentifier",
+                              "src": "2949:1:3"
+                            },
+                            {
+                              "name": "r",
+                              "nodeType": "YulIdentifier",
+                              "src": "2952:1:3"
+                            }
+                          ],
+                          "functionName": {
+                            "name": "addmod",
+                            "nodeType": "YulIdentifier",
+                            "src": "2925:6:3"
+                          },
+                          "nodeType": "YulFunctionCall",
+                          "src": "2925:29:3"
+                        },
+                        "variableNames": [
+                          {
+                            "name": "out",
+                            "nodeType": "YulIdentifier",
+                            "src": "2918:3:3"
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "evmVersion": "istanbul",
+                  "externalReferences": [
+                    {
+                      "declaration": 2478,
+                      "isOffset": false,
+                      "isSlot": false,
+                      "src": "2918:3:3",
+                      "valueSize": 1
+                    },
+                    {
+                      "declaration": 2473,
+                      "isOffset": false,
+                      "isSlot": false,
+                      "src": "1578:1:3",
+                      "valueSize": 1
+                    },
+                    {
+                      "declaration": 2473,
+                      "isOffset": false,
+                      "isSlot": false,
+                      "src": "2942:1:3",
+                      "valueSize": 1
+                    },
+                    {
+                      "declaration": 2475,
+                      "isOffset": false,
+                      "isSlot": false,
+                      "src": "1581:1:3",
+                      "valueSize": 1
+                    },
+                    {
+                      "declaration": 2475,
+                      "isOffset": false,
+                      "isSlot": false,
+                      "src": "2400:1:3",
+                      "valueSize": 1
+                    },
+                    {
+                      "declaration": 2475,
+                      "isOffset": false,
+                      "isSlot": false,
+                      "src": "2775:1:3",
+                      "valueSize": 1
+                    },
+                    {
+                      "declaration": 2475,
+                      "isOffset": false,
+                      "isSlot": false,
+                      "src": "2949:1:3",
+                      "valueSize": 1
+                    }
+                  ],
+                  "id": 2480,
+                  "nodeType": "InlineAssembly",
+                  "src": "1327:1637:3"
+                }
+              ]
+            },
+            "id": 2482,
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "hash",
+            "nameLocation": "1016:4:3",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 2476,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 2473,
+                  "mutability": "mutable",
+                  "name": "x",
+                  "nameLocation": "1029:1:3",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2482,
+                  "src": "1021:9:3",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes32",
+                    "typeString": "bytes32"
+                  },
+                  "typeName": {
+                    "id": 2472,
+                    "name": "bytes32",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1021:7:3",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes32",
+                      "typeString": "bytes32"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 2475,
+                  "mutability": "mutable",
+                  "name": "y",
+                  "nameLocation": "1040:1:3",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2482,
+                  "src": "1032:9:3",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes32",
+                    "typeString": "bytes32"
+                  },
+                  "typeName": {
+                    "id": 2474,
+                    "name": "bytes32",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1032:7:3",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes32",
+                      "typeString": "bytes32"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1020:22:3"
+            },
+            "returnParameters": {
+              "id": 2479,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 2478,
+                  "mutability": "mutable",
+                  "name": "out",
+                  "nameLocation": "1073:3:3",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2482,
+                  "src": "1065:11:3",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes32",
+                    "typeString": "bytes32"
+                  },
+                  "typeName": {
+                    "id": 2477,
+                    "name": "bytes32",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1065:7:3",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes32",
+                      "typeString": "bytes32"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1064:13:3"
+            },
+            "scope": 2483,
+            "src": "1007:1963:3",
+            "stateMutability": "pure",
+            "virtual": false,
+            "visibility": "internal"
+          }
+        ],
+        "scope": 2484,
+        "src": "986:1986:3"
+      }
+    ],
+    "src": "134:2839:3"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.8.2+commit.661d1103.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.4.11",
+  "updatedAt": "2022-12-28T06:30:44.829Z",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {},
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "notice": "r = 8444461749428370424248824938781546531375899335154063827935233455917409239041   e (exponent) = 31, so that e=2^t-1 (t=5) and 1 == gcd(e, r-1)   rounds = 51 See MiMC7.sol for details.",
+    "version": 1
+  }
+}

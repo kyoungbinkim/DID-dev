@@ -1,0 +1,20 @@
+{
+  "name": "didcontracts",
+  "version": "1.0.0",
+  "description": "",
+  "main": "truffle-config.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "remixd": "^0.2.4",
+    "solc": "^0.8.2",
+    "truffle": "^5.7.1"
+  }
+}

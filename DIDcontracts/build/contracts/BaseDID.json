@@ -1,0 +1,372 @@
+{
+  "contractName": "BaseDID",
+  "abi": [
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "bytes32",
+          "name": "message",
+          "type": "bytes32"
+        }
+      ],
+      "name": "LogDebug",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "m",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "r",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "s",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "pk",
+          "type": "uint256"
+        }
+      ],
+      "name": "Verify",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "index",
+          "type": "uint256"
+        }
+      ],
+      "name": "_computeMerklePath",
+      "outputs": [
+        {
+          "internalType": "bytes32[]",
+          "name": "",
+          "type": "bytes32[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "_nodes",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "x",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "y",
+          "type": "bytes32"
+        }
+      ],
+      "name": "hash",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.8.2+commit.661d1103\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"message\",\"type\":\"bytes32\"}],\"name\":\"LogDebug\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"m\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"r\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"s\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"pk\",\"type\":\"uint256\"}],\"name\":\"Verify\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"index\",\"type\":\"uint256\"}],\"name\":\"_computeMerklePath\",\"outputs\":[{\"internalType\":\"bytes32[]\",\"name\":\"\",\"type\":\"bytes32[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"_nodes\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"x\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"y\",\"type\":\"bytes32\"}],\"name\":\"hash\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"pure\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/BaseDID.sol\":\"BaseDID\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/BaseDID.sol\":{\"keccak256\":\"0xbf8d9d6d914ab290876f73046cb3ab11c79d0ef767329700ed81ff645ec8a591\",\"license\":\"LGPL-3.0+\",\"urls\":[\"bzz-raw://8c50e50f9ef552b3ad52fdeb955ea7f22a65504f17c3c39f5a6cc3abfcbcf501\",\"dweb:/ipfs/QmQ6guWL3PLZz8rkss44qPJ5atHuiG3LfVoysDtKh1mhg7\"]},\"project:/contracts/BaseMerkleTree.sol\":{\"keccak256\":\"0xab27c6e27e71d576aff6f1905733c87f47c2434e625941d5e5c95048797b546a\",\"license\":\"LGPL-3.0+\",\"urls\":[\"bzz-raw://3fd0ddec089c6aaf70aabba23bfbfc0add328611fdb96663532a866a2b7f1d02\",\"dweb:/ipfs/QmTtB6kH4PPPJLFzKn4iF4Zt2ENbFbFtRUPy4syBD836FQ\"]},\"project:/contracts/BigNumbers.sol\":{\"keccak256\":\"0x7cde807af1d267e0d8216282295bc28be926a77d0a974c194e989038ff887571\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://3cf074eaf1f7672df78d73160e5d6213f4126df8bf811f0ff3b0855a9cce6592\",\"dweb:/ipfs/QmdjEgHJ7ojuDiQnQMx42zzrfUABKjopPLUNybyLUhxkZC\"]},\"project:/contracts/MiMC7.sol\":{\"keccak256\":\"0x6699f15f4ecd06e19e2263c96367069906f77d78b734833cea21e0448e07ea29\",\"license\":\"LGPL-3.0+\",\"urls\":[\"bzz-raw://aa4a3451df04180559d204a9669de06fd147533a27edfa2a4051539488836497\",\"dweb:/ipfs/QmZUNUrNDPATwMPW5cDQ2qh7cMVyrW5xaGedsf5Mrex2PW\"]},\"project:/contracts/VerifySchnorr.sol\":{\"keccak256\":\"0x7294c821c855171ec224f144d99f5c09fe3a6d8fe8a138400fa59099ca3f773a\",\"license\":\"LGPL-3.0+\",\"urls\":[\"bzz-raw://91f50818ec4ce808255ec0a71edc496af889a1765f65006e19027d8c52402b87\",\"dweb:/ipfs/QmWS1qNMdqJt8GSPbv51gyC2Rwt78jj5CeMGAFzosgPTaM\"]}},\"version\":1}",
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "immutableReferences": {},
+  "generatedSources": [],
+  "deployedGeneratedSources": [],
+  "sourceMap": "",
+  "deployedSourceMap": "",
+  "source": "// SPDX-License-Identifier: LGPL-3.0+\npragma solidity ^0.8.2;\n\nimport \"./BaseMerkleTree.sol\";\nimport \"./VerifySchnorr.sol\";\n\nabstract contract BaseDID is BaseMerkleTree, VerifySchnorr {\n        \n        mapping(uint256 => bool) private _acc;\n\n        uint256 private recentAcc;\n\n        mapping(address => bool) private _issue_addr;\n}",
+  "sourcePath": "/Users/kim/DID-dev/DIDcontracts/contracts/BaseDID.sol",
+  "ast": {
+    "absolutePath": "project:/contracts/BaseDID.sol",
+    "exportedSymbols": {
+      "BaseDID": [
+        18
+      ],
+      "BaseMerkleTree": [
+        474
+      ],
+      "BigNumber": [
+        483
+      ],
+      "BigNumbers": [
+        2468
+      ],
+      "MiMC7": [
+        2498
+      ],
+      "VerifySchnorr": [
+        2740
+      ]
+    },
+    "id": 19,
+    "license": "LGPL-3.0+",
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 1,
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".2"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "38:23:0"
+      },
+      {
+        "absolutePath": "project:/contracts/BaseMerkleTree.sol",
+        "file": "./BaseMerkleTree.sol",
+        "id": 2,
+        "nameLocation": "-1:-1:-1",
+        "nodeType": "ImportDirective",
+        "scope": 19,
+        "sourceUnit": 475,
+        "src": "63:30:0",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "absolutePath": "project:/contracts/VerifySchnorr.sol",
+        "file": "./VerifySchnorr.sol",
+        "id": 3,
+        "nameLocation": "-1:-1:-1",
+        "nodeType": "ImportDirective",
+        "scope": 19,
+        "sourceUnit": 2741,
+        "src": "94:29:0",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "abstract": true,
+        "baseContracts": [
+          {
+            "baseName": {
+              "id": 4,
+              "name": "BaseMerkleTree",
+              "nodeType": "IdentifierPath",
+              "referencedDeclaration": 474,
+              "src": "154:14:0"
+            },
+            "id": 5,
+            "nodeType": "InheritanceSpecifier",
+            "src": "154:14:0"
+          },
+          {
+            "baseName": {
+              "id": 6,
+              "name": "VerifySchnorr",
+              "nodeType": "IdentifierPath",
+              "referencedDeclaration": 2740,
+              "src": "170:13:0"
+            },
+            "id": 7,
+            "nodeType": "InheritanceSpecifier",
+            "src": "170:13:0"
+          }
+        ],
+        "contractDependencies": [
+          474,
+          2740
+        ],
+        "contractKind": "contract",
+        "fullyImplemented": false,
+        "id": 18,
+        "linearizedBaseContracts": [
+          18,
+          2740,
+          474
+        ],
+        "name": "BaseDID",
+        "nameLocation": "143:7:0",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "constant": false,
+            "id": 11,
+            "mutability": "mutable",
+            "name": "_acc",
+            "nameLocation": "236:4:0",
+            "nodeType": "VariableDeclaration",
+            "scope": 18,
+            "src": "203:37:0",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_mapping$_t_uint256_$_t_bool_$",
+              "typeString": "mapping(uint256 => bool)"
+            },
+            "typeName": {
+              "id": 10,
+              "keyType": {
+                "id": 8,
+                "name": "uint256",
+                "nodeType": "ElementaryTypeName",
+                "src": "211:7:0",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_uint256",
+                  "typeString": "uint256"
+                }
+              },
+              "nodeType": "Mapping",
+              "src": "203:24:0",
+              "typeDescriptions": {
+                "typeIdentifier": "t_mapping$_t_uint256_$_t_bool_$",
+                "typeString": "mapping(uint256 => bool)"
+              },
+              "valueType": {
+                "id": 9,
+                "name": "bool",
+                "nodeType": "ElementaryTypeName",
+                "src": "222:4:0",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bool",
+                  "typeString": "bool"
+                }
+              }
+            },
+            "visibility": "private"
+          },
+          {
+            "constant": false,
+            "id": 13,
+            "mutability": "mutable",
+            "name": "recentAcc",
+            "nameLocation": "267:9:0",
+            "nodeType": "VariableDeclaration",
+            "scope": 18,
+            "src": "251:25:0",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint256",
+              "typeString": "uint256"
+            },
+            "typeName": {
+              "id": 12,
+              "name": "uint256",
+              "nodeType": "ElementaryTypeName",
+              "src": "251:7:0",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint256",
+                "typeString": "uint256"
+              }
+            },
+            "visibility": "private"
+          },
+          {
+            "constant": false,
+            "id": 17,
+            "mutability": "mutable",
+            "name": "_issue_addr",
+            "nameLocation": "320:11:0",
+            "nodeType": "VariableDeclaration",
+            "scope": 18,
+            "src": "287:44:0",
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_mapping$_t_address_$_t_bool_$",
+              "typeString": "mapping(address => bool)"
+            },
+            "typeName": {
+              "id": 16,
+              "keyType": {
+                "id": 14,
+                "name": "address",
+                "nodeType": "ElementaryTypeName",
+                "src": "295:7:0",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_address",
+                  "typeString": "address"
+                }
+              },
+              "nodeType": "Mapping",
+              "src": "287:24:0",
+              "typeDescriptions": {
+                "typeIdentifier": "t_mapping$_t_address_$_t_bool_$",
+                "typeString": "mapping(address => bool)"
+              },
+              "valueType": {
+                "id": 15,
+                "name": "bool",
+                "nodeType": "ElementaryTypeName",
+                "src": "306:4:0",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_bool",
+                  "typeString": "bool"
+                }
+              }
+            },
+            "visibility": "private"
+          }
+        ],
+        "scope": 19,
+        "src": "125:209:0"
+      }
+    ],
+    "src": "38:296:0"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.8.2+commit.661d1103.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.4.11",
+  "updatedAt": "2022-12-28T06:30:44.822Z",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {},
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  }
+}
