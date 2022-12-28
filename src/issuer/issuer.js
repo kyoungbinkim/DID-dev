@@ -87,7 +87,7 @@ export default class Issuer {
             const r = math.randomFieldElement(this.pubKey.pp.prime).toString(16);
             const tmp = new Array();
             const attrHex = types.asciiToHex(JSON.stringify(attr[i]));
-            const tag = mimc7.hash(idData, attrHex, data, r)
+            const tag = mimc7.hash(idData, attrHex+r)
             
             tmp.push(JSON.stringify(attr[i]), r, tag);
             concatTag += tag

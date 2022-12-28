@@ -55,7 +55,7 @@ export function Verify(m, signature, pubKey) {
 
     if(Config.SIGN_TYPE == 'SCHNORR') {
         const e = mimc7.hash(mHexString, signature['r'].toString(16));
-
+        console.log("Hash(m||r) : ",e);
         const tmp =
             modPow(pubKey.pp.generator, signature['s'], pubKey.pp.prime) *
             modPow(pubKey.pk, types.hexToInt(e), pubKey.pp.prime);
@@ -70,4 +70,22 @@ export function Verify(m, signature, pubKey) {
     else if(Config.SIGN_TYPE == 'ELGAMAL'){
 
     }
+}
+
+/**
+ * 
+ * @param {String} m 
+ * @param {JSON} signature 
+ * @param {PubKey} pubKey 
+ */
+export function msgAndSignToContractFormat(m, signature, pubKey){
+    const uintMsg = math.mod(BigInt('0x'+types.asciiToHex(m)), pubKey.pp.prime).toString();
+    const uintR   = signature['r'].toString();
+    const uintS   = signature['s'].toString();
+    const uintPk  = pubKey.pk.toString();
+
+    console.log(uintMsg);
+    console.log(uintR);
+    console.log(uintS);
+    console.log(uintPk);
 }
