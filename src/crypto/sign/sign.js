@@ -84,8 +84,8 @@ export function msgAndSignToContractFormat(m, signature, pubKey){
     const uintS   = signature['s'].toString();
     const uintPk  = pubKey.pk.toString();
 
-    console.log(uintMsg);
-    console.log(uintR);
-    console.log(uintS);
-    console.log(uintPk);
+    console.log("uintmsg :\t", uintMsg);
+    console.log("uintR   :\t", uintR);
+    console.log("uintS   :\t", uintS);
+    console.log("uintPk  :\t", uintPk);
 }
