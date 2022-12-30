@@ -9,8 +9,10 @@ import "./MiMC7.sol";
 // generator : 10398164868948269691505217409040279103932722394566360325611713252123766059173
 
 contract VerifySchnorr {
-    BigNumber p;
+    // save as hex bytes in BigNumber.val
+    BigNumber p; 
     BigNumber g;
+
     constructor(uint256 prime, uint256 generator) {
         p = BigNumbers.init(prime, false);
         g = BigNumbers.init(generator, false);
@@ -29,20 +31,33 @@ contract VerifySchnorr {
         return ret;
     }
     
+
     function Verify(uint256 m, uint256 r, uint256 s, uint256 pk) public view returns (bool){
         BigNumber memory _r = BigNumbers.init(abi.encodePacked(r), false);
         BigNumber memory _s = BigNumbers.init(abi.encodePacked(s), false);
         BigNumber memory _pk = BigNumbers.init(abi.encodePacked(pk), false);
 
+        // e = hash(m || r)
         bytes32 e = hash(bytes32(m), bytes32(r));
         BigNumber memory _e = BigNumbers.init(bytes32TOBytes(e), false);
 
+        // r` =  (g^s * pk^e) mod p
         BigNumber memory calc_r = BigNumbers.modmul (
             BigNumbers.modexp(g, _s, p),
             BigNumbers.modexp(_pk, _e, p),
             p
         );
 
+        // check r` == r
         return BigNumbers.cmp(calc_r, _r, false) == 0;
+    }
+
+    // to test web3.js
+    function getFeildPrimeBytes() public view returns (bytes memory) {
+        return p.val;
+    }
+
+    function getGeneratorBytes() public view returns (bytes memory) {
+        return g.val;
     }
 }
