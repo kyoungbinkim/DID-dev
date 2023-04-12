@@ -36,7 +36,7 @@ export default class Issuer {
      * 
      * @returns {infoJsonArr} [[attrJson, r, tag] ...]
      */
-    issueCredential(usrAddr, ...attr){
+    issueCredential(...attr){
         const attrNum = attr.length;
         const mimc7 = new mimc.MiMC7();
         const ret = new Array(attrNum);
@@ -46,7 +46,7 @@ export default class Issuer {
             const r = math.randomFieldElement(this.pubKey.pp.prime).toString(16);
             const tmp = new Array();
             const attrHex = types.asciiToHex(JSON.stringify(attr[i]));
-            const tag = mimc7.hash(usrAddr, attrHex, r)
+            const tag = mimc7.hash(this.pubKey.pk, attrHex, r)
             
             tmp.push(JSON.stringify(attr[i]), r, tag);
             concatTag += tag

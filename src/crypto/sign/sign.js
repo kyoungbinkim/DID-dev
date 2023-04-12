@@ -17,7 +17,7 @@ export function Sign(m, privKey){
         return null;
     }
 
-    const mHexString = types.asciiToHex(m);
+    let mHexString = types.isBigIntFormat(m)? m : types.asciiToHex(m);
     const mimc7 = new mimc.MiMC7();
     let signature  = {};
     

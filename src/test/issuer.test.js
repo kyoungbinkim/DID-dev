@@ -7,7 +7,7 @@ describe('test', () => {
     it('test', () => {
         const key = SignKeyGen();
         const issuer = new Issuer(key.pk, key.sk);
-        console.log(issuer.issueCredential('aff00ff00', {'name':'kim'}, {'age':199}))
+        console.log(issuer.issueCredential( {'name':'kim'}, {'age':199}))
         
         const mimc7 = new mimc.MiMC7();
         const data = 'ffaaff00aaffaa1203012301';
