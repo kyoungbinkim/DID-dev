@@ -1,4 +1,4 @@
-import { PubKey, PrivKey } from "../crypto/sign/key.js";
+import { PubKey, PrivKey, SignKeyGen } from "../crypto/sign/key.js";
 import { Sign, Verify } from "../crypto/sign/sign.js";
 import math from "../utils/math.js";
 import mimc from "../crypto/mimc.js";
@@ -15,6 +15,11 @@ export default class Issuer {
     constructor(pubkey, privkey){
         this.pubKey   = pubkey;
         this.#privKey = privkey;
+    }
+
+    static generateIssuer(){
+        const {pk, sk} = SignKeyGen();
+        return new Issuer(pk, sk);
     }
 
     /**
