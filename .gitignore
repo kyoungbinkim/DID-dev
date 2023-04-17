@@ -1,5 +1,6 @@
 /node_modules/
 /DIDcontracts/node_modules/
+/DIDcontracts/build/
 ./node_modules/
 
 package-lock.json
