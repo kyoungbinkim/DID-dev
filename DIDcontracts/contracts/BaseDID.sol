@@ -5,14 +5,18 @@ import "./BaseMerkleTree.sol";
 import "./VerifySchnorr.sol";
 
 abstract contract BaseDID is BaseMerkleTree, VerifySchnorr {
-        // contract deployer's pk : 정부의 pk
-        uint256 private _issuerPk;
 
-        constructor(uint256 issuerPk, uint256 g, uint256 p, uint256 depth, uint256 hash_type)
+        uint256 private _issuePk;
+        uint256 private _revokePk;
+
+        mapping(uint256 => bool) public nullifier;
+
+        constructor(uint256 issuerPk, uint256 revokePk, uint256 g, uint256 p, uint256 depth, uint256 hash_type)
                 BaseMerkleTree(depth, hash_type)
                 VerifySchnorr(p,g)
         {
-                _issuerPk = issuerPk;
+                _issuePk = issuerPk;
+                _revokePk = revokePk;
         }
 
         function issueDID (
@@ -20,7 +24,7 @@ abstract contract BaseDID is BaseMerkleTree, VerifySchnorr {
                 uint256 r,
                 uint256 s
         ) payable public {
-                require(Verify(credential, r, s, _issuerPk), "invalid signature");
+                require(Verify(credential, r, s, _issuePk), "invalid signature");
 
                 _insert(bytes32(credential));
                 _recomputeRoot(1);
@@ -31,11 +35,9 @@ abstract contract BaseDID is BaseMerkleTree, VerifySchnorr {
                 uint256 r,
                 uint256 s
         ) payable public {
-                require(Verify(credential, r, s, _issuerPk), "invalid signature");
+                require(Verify(credential, r, s, _revokePk), "invalid signature");
 
-                // TODO
-                // use nullifier or delete from merkleTree
-                
+                nullifier[credential] = true;
         }
 
         function getMerklePath(uint256 index) public view returns (uint256[] memory) {
@@ -47,5 +49,19 @@ abstract contract BaseDID is BaseMerkleTree, VerifySchnorr {
                 }
                 
                 return merkle_path;
+        }
+
+        function getIssuerPk() view public returns(uint256) {
+                return _issuePk;
+        }
+
+        function isValidCredential (
+                uint256 credential,
+                uint256 index
+        ) payable public returns (bool){
+                require(uint256(_nodes[index]) == credential, 'invalid credential');
+                require(!nullifier[credential], 'nullified credential');
+
+                return true;
         }
 }

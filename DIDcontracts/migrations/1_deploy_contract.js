@@ -1,11 +1,15 @@
 const BigNumbersLib = artifacts.require("BigNumbers");
 const MiMC7Lib = artifacts.require("MiMC7");
 const VerifySchnorr = artifacts.require("VerifySchnorr");
+const BaseMerkleTree = artifacts.require("BaseMerkleTree");
+const BaseDID = artifacts.require("BaseDID");
+
 
 console.log("1_deploy_contracts");
 module.exports = function(deployer) {
   deployer.deploy(BigNumbersLib);
   deployer.deploy(MiMC7Lib);
+  deployer.deploy(BaseMerkleTree);
   deployer.link(BigNumbersLib, VerifySchnorr);
   deployer.link(MiMC7Lib, VerifySchnorr);
   deployer.deploy(

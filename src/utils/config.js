@@ -15,6 +15,12 @@ var Config = {
 
     EC_ALT_BN128    : 1,
     EC_BLS12_381    : 2,
+
+    testProvider    : 'http://127.0.0.1:7545',
+}
+
+const initConfig = () => {
+
 }
 
 export default Config;

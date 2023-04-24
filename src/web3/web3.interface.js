@@ -3,6 +3,9 @@ import types, { addPrefixHex } from '../utils/types'
 import _ from 'lodash';
 
 export default class Web3Interface extends Web3 {
+
+    contractAddress = undefined;
+
     /**
      * @param {String} endpoint address of endpoint
      */
@@ -105,7 +108,7 @@ export default class Web3Interface extends Web3 {
         receiverEthAddr,
         value,
         senderEthPrivateKey,
-        gas = Constants.DEFAULT_GAS_VALUE,
+        gas = '0x10000',
     ) {
         try {
             let txDescription = {
@@ -159,7 +162,7 @@ export default class Web3Interface extends Web3 {
         to,
         amount,
         privateKey,
-        gas = Constants.DEFAULT_LEGACY_TRANSFER_GAS,
+        gas,
     ) {
         return this.sendTransaction(
             from,
@@ -189,14 +192,36 @@ export default class Web3Interface extends Web3 {
             })
             .send({
                 from: deployer,
-                gas: Constants.DEFAULT_DEPLOY_GAS,
+                gas: 53000,
             })
             .on('receipt', function (receipt) {
                 console.log('deployed:', receipt.contractAddress);
                 console.log('gasUsed:', receipt.gasUsed);
                 deployedAddress = receipt.contractAddress;
             });
+        this.contractAddress = deployedAddress;
         return deployedAddress;
+    }
+
+    async sendDeployTransaction(deployer, deployerPrivKey, abi, bytecode, gasPrice, ...args){
+        const instantiate = new this.eth.Contract(abi);
+        const deployTransaction = instantiate.deploy({
+            data : bytecode,
+            arguments : args,
+        })
+
+        const signedTx = await this.eth.accounts.signTransaction({
+            from    : deployer,
+            data    : deployTransaction.encodeABI(),
+            gas     : await deployTransaction.estimateGas(),
+            gasPrice: gasPrice
+        }, deployerPrivKey);
+
+        const receipt = await this.eth.sendSignedTransaction(signedTx.rawTransaction);
+        
+        this.contractAddress = receipt.contractAddress;
+
+        return receipt.contractAddress;
     }
 
     /**

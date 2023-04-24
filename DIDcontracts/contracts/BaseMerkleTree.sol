@@ -183,5 +183,4 @@ abstract contract BaseMerkleTree
         }
         return _nodes[2**(_DEPTH - layer) - 1 + index];
     }
-   
 }
