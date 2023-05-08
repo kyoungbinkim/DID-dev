@@ -1,6 +1,6 @@
-import { PubKey, PrivKey, SignKeyGen } from "../crypto/sign/key.js";
+import { PubKey, PrivKey, SignKeyGen, SchnorrSignKeys } from "../crypto/sign/key.js";
 import { Sign, Verify } from "../crypto/sign/sign.js";
-import math from "../utils/math.js";
+import math, { randomFieldElement } from "../utils/math.js";
 import mimc from "../crypto/mimc.js";
 import types from "../utils/types.js";
 
@@ -19,6 +19,7 @@ export default class Issuer {
 
     static generateIssuer(){
         const {pk, sk} = SignKeyGen();
+        
         return new Issuer(pk, sk);
     }
 
@@ -105,5 +106,24 @@ export default class Issuer {
             'infoJsonArr' :ret,
             'sign' :sign
         };
+    }
+}
+
+
+class Issuer{
+    constructor(issueSk, revokeSk) {
+        this.issueKeys = SchnorrSignKeys(issueSk);
+        this.revokeKeys = SchnorrSignKeys(revokeSk);
+    }
+
+    static generateIssuer(){
+        const issueSk = randomFieldElement();
+        const revokeSk= randomFieldElement();
+
+        return new Issuer(issueSk, revokeSk);
+    }
+
+    static recoverIssuerFromSk(issueSk, revokeSk){
+        return new Issuer(issueSk, revokeSk);
     }
 }

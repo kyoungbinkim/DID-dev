@@ -16,7 +16,6 @@ export class PubKey {
      * @param {BigInt} generator
      */
     constructor(sk){
-
         this.pp = {
             prime     : Prime,
             generator : Generator,
@@ -54,24 +53,18 @@ export function SignKeyGen(){
  * 
  * prime, generator, sk : BigInt
  */
-export class SchnorrKey{
-    constructor({prime, generator}, sk){
+export class SchnorrSignKeys{
+    constructor(sk){
         this.pp = {
-            prime : prime,
-            generator : generator
+            prime : Prime,
+            generator : Generator
         }
-        this.sk = sk;
-        this.pk = modPow(generator, sk, prime);
+        this.sk = new PrivKey(sk);
+        this.pk = new PubKey(sk);
     }
 
-    getSK(){
-        return {
-            pp : this.pp,
-            sk : this.sk
-        };
-    }
-
-    toJson(){
-        
+    static KeyGen(){
+        const {sk} = SignKeyGen();
+        return new SchnorrSignKeys(sk.sk);
     }
 }

@@ -51,7 +51,7 @@ abstract contract BaseDID is BaseMerkleTree, VerifySchnorr {
                 return merkle_path;
         }
 
-        function getIssuerPk() view public returns(uint256) {
+        function getIssuePk() view public returns(uint256) {
                 return _issuePk;
         }
 
